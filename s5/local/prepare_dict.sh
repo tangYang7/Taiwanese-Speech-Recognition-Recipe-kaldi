@@ -4,7 +4,7 @@
 # Copyright 2018  Yuan-Fu Liao, National Taipei University of Technology
 # Apache 2.0
 
-source_dir=output
+source_dir=language
 dict_dir=data/local/dict
 rm -rf $dict_dir
 mkdir -p $dict_dir
