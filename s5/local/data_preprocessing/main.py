@@ -10,11 +10,21 @@ def normalize_taiwanese(text: str) -> str:
     - 移除標點
     - 保留數字
     """
-    # 非英數一律轉空白
+    # 1. Replace non-alphanumeric with space
     text = re.sub(r"[^a-zA-Z0-9]", " ", text)
-    # 多餘空白壓成一個
-    text = re.sub(r"\s+", " ", text).strip()
-    return text
+    
+    # 2. Split into individual tokens
+    tokens = text.split()
+    
+    # 3. Filter tokens: Must be lowercase + end with digit 1-9
+    # This regex ensures the word part is lowercase and the last char is a digit.
+    valid_tokens = [
+        t for t in tokens 
+        if re.fullmatch(r"[a-z]+[1-9]", t)
+    ]
+    
+    # 4. Join back with a single space
+    return " ".join(valid_tokens)
 
 def make_kaldi_files(audio_root, json_root, out_dir):
     os.makedirs(out_dir, exist_ok=True)
@@ -43,18 +53,12 @@ def make_kaldi_files(audio_root, json_root, out_dir):
         raw_text = meta.get("台羅數字調", "")
         norm_text = normalize_taiwanese(raw_text)
 
-        if norm_text == "":
-            print(f"[WARN] empty text: {utt_id}")
+        if not norm_text:
             continue
 
         utt2spk[utt_id] = spk_id
         text_dict[utt_id] = norm_text
         wav_scp[utt_id] = wav_path
-
-    # === 寫 utt2spk ===
-    with open(os.path.join(out_dir, "utt2spk"), "w", encoding="utf-8") as f:
-        for utt_id in sorted(utt2spk):
-            f.write(f"{utt_id} {utt2spk[utt_id]}\n")
 
     # === 寫 spk2utt ===
     spk2utt = defaultdict(list)
@@ -66,15 +70,12 @@ def make_kaldi_files(audio_root, json_root, out_dir):
             utts = " ".join(sorted(spk2utt[spk_id]))
             f.write(f"{spk_id} {utts}\n")
 
-    # === 寫 wav.scp ===
-    with open(os.path.join(out_dir, "wav.scp"), "w", encoding="utf-8") as f:
-        for utt_id in sorted(wav_scp):
-            f.write(f"{utt_id} {wav_scp[utt_id]}\n")
+    # === 寫 utt2spk, wav.scp, text ===
+    for filename, data_dict in [("utt2spk", utt2spk), ("wav.scp", wav_scp), ("text", text_dict)]:
+        with open(os.path.join(out_dir, filename), "w", encoding="utf-8") as f:
+            for uid in sorted(data_dict):
+                f.write(f"{uid} {data_dict[uid]}\n")
 
-    # === 寫 text ===
-    with open(os.path.join(out_dir, "text"), "w", encoding="utf-8") as f:
-        for utt_id in sorted(text_dict):
-            f.write(f"{utt_id} {text_dict[utt_id]}\n")
 
     print(f"Done. Files written to {out_dir}")
 if __name__ == "__main__":
