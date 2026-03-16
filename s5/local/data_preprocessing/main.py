@@ -9,6 +9,7 @@ def normalize_taiwanese(text: str) -> str:
     將台羅數字調轉成 Kaldi-friendly text
     - 移除標點
     - 保留數字
+    - 只保留小寫字母 + 1-9 的組合
     """
     # 1. Replace non-alphanumeric with space
     text = re.sub(r"[^a-zA-Z0-9]", " ", text)

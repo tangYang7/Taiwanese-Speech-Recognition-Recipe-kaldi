@@ -25,7 +25,7 @@ set -eo pipefail
 if [ $stage -le -2 ]; then
   # Lexicon Preparation,
   # echo "$0: Lexicon Preparation"
-  # local/prepare_dict.sh || exit 1;
+  local/prepare_dict.sh || exit 1;
 
   # Data Preparation
   echo "$0: Data Preparation"

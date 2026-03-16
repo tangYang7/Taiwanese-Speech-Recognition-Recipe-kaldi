@@ -46,11 +46,11 @@ BEGIN {
         char2 = substr(base, 1, 2);
 
         if (is_vowel[char1]) {
-            printf("%s\t%s\n", syllable, syllable);
+            printf("%s %s\n", syllable, syllable);
         } else if (is_double_cons[char2]) {
-            printf("%s\t%s %s\n", syllable, char2, substr(syllable, 3));
+            printf("%s %s %s\n", syllable, char2, substr(syllable, 3));
         } else {
-            printf("%s\t%s %s\n", syllable, char1, substr(syllable, 2));
+            printf("%s %s %s\n", syllable, char1, substr(syllable, 2));
         }
     }
 }' "$dict_dir/base_syllables.tmp" > "$dict_dir/lexicon.txt"

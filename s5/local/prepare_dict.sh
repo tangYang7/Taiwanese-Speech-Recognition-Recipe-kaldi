@@ -4,7 +4,7 @@
 # Copyright 2018  Yuan-Fu Liao, National Taipei University of Technology
 # Apache 2.0
 
-source_dir=language
+source_dir=output
 dict_dir=data/local/dict
 rm -rf $dict_dir
 mkdir -p $dict_dir
@@ -23,8 +23,12 @@ echo "<SIL> SIL"	>> $dict_dir/lexicon.txt
 rm -f $dict_dir/silence_phones.txt
 touch $dict_dir/silence_phones.txt
 
-echo "SIL"	> $dict_dir/silence_phones.txt
-
+# --- Check if <SIL> already exists ---
+if ! grep -q "<SIL>" "$dict_dir/lexicon.txt"; then
+    echo "Note: <SIL> not found in source, adding default <SIL> SIL"
+    echo "<SIL> SIL" >> $dict_dir/lexicon.txt
+fi
+# --------------------------------------
 #
 # find nonsilence phones
 #
