@@ -18,16 +18,24 @@
 
 - Make sure that CUDA is successfully detected during configuration. GPU acceleration in Kaldi requires CUDA support.
 
-## 2. (optional) Check and Update the lexicon in s5/language
+
+## 2. Prepare data
 - Prepare dataset to generate kaldi-sytle data, and set your `audio_root`, `json_root`, and `out_dir` in main.py
     ```bash
     cd s5
-    python main.py
+    python local/data_preprocessing/main.py
     ```
+- Copy the dictionary in test_data into data
+    ```bash
+    cp -r test_data/train data/train
+    cp -r test_data/test data/test
+    ```
+
+## 3. (Optional) Check and Update the lexicon in s5/language
+
 
 - run `gen_lexicon.sh` or `update_lexicon.sh` for dataset lexicon, `out_dir = "../test_data"` in `main.py` for example
     ```bash
-    cd s5
     # Usage: $0 <source_dir> <dict_dir> <file1> [file2 ...] 
     ./local/data_preprocessing/update_lexicon.sh language <new_lexicon_root> ../test_data/train ../test_data/test
     ```
@@ -40,7 +48,7 @@
     mv <new_lexicon_root> language 
     ```
 
-## 3. Run
+## 4. Run the main shell script
     ```bash
     # Run from stage -2 to final stage
     ./run.sh
